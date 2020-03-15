@@ -55,12 +55,17 @@ script:
 # Tag docker
   - docker tag $docker_uuid mellanox/${DOCKER_NAME}:${DOCKER_VERSION}
   - docker images
+  - echo "docker push {TRAVIS_REPO_SLUG}-${BRANCH}-aarch64:${DOCKER_VERSION}"
 
 deploy:
   # Push image to Dockerhub on merge to $BRANCH
   - provider: script
     skip_cleanup: true
     script: >
-      bash -cx 'docker push mellanox/${DOCKER_NAME}:${DOCKER_VERSION}; echo done'
+      bash -cx '
+      echo "Pushing {TRAVIS_REPO_SLUG}-${BRANCH}-aarch64:${DOCKER_VERSION};
+      docker push ${TRAVIS_REPO_SLUG}-${BRANCH}-aarch64:${DOCKER_VERSION};
+      echo "Done"
+      '
     on:
       branch: $BRANCH
