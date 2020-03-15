@@ -6,8 +6,8 @@ arch: arm64
 env:
   global:
     - BRANCH=stein
-    - DOCKER_NAME=centos-binary-neutron-openvswitch-agent-${BRANCH}-aarch64
     - DOCKER_VERSION=latest
+    - DOCKER_NAME=${TRAVIS_REPO_SLUG}-${BRANCH}-aarch64:${DOCKER_VERSION}
 
 services:
   - docker
@@ -53,7 +53,8 @@ script:
   - docker run --rm $docker_uuid rpm -qa|sort|egrep 'neutron|os-vif'
 
 # Tag docker
-  - docker tag $docker_uuid mellanox/${DOCKER_NAME}:${DOCKER_VERSION}
+  - echo "Creating ${DOCKER_NAME}" 
+  - docker tag $docker_uuid ${DOCKER_NAME}
   - docker images
 
 deploy:
@@ -61,6 +62,6 @@ deploy:
   - provider: script
     skip_cleanup: true
     script: >
-      bash -cx docker push mellanox/${DOCKER_NAME}:${DOCKER_VERSION}
+      bash -cx docker push ${DOCKER_NAME}
     on:
       branch: $BRANCH
